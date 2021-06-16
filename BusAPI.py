@@ -97,8 +97,7 @@ def noticeOneMinute(arrival, uuid, target_stId, target_busRouteId, target_ord):
     print("직전에 다시 예상한 도착시간:", finalArrival)
     print("직전 사용자 알림:", msgFinal)
 
-    publish.single("eyeson/" + uuid, "bigData/last/" + msgFinal,
-                   hostname="15.164.46.54")  # 데이터 전송
+    publish("eyeson/" + uuid, "bigData/last/" + msgFinal)  # 데이터 전송
 
     return (finalArrival, msgFinal)
 
@@ -192,3 +191,6 @@ def waitdeep(a):
             i = float(i_essence) * 1 + float(i_decimal) * 0.01
             x.append(float(i))
     return x
+
+def publish(topic, data):
+    publish.single(topic,data,hostname="172.30.1.52")

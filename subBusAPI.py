@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
-import paho.mqtt.publish as publish
+
 from BusAPI import *
+
 """
 on_connect는 subscriber가 브로커에 연결하면서 호출할 함수
 rc가 0이면 정상접속이 됐다는 의미
@@ -39,7 +40,7 @@ def on_message(client, userdata, msg):
                 indexsin = msgArrival.find("승")
                 msgArrival = msgArrival[0:indexsin]
                 print(msgArrival)
-                publish.single("eyeson/" + uuid, "bigData/busTime/" + msgArrival, hostname="15.164.46.54")
+                publish("eyeson/" + uuid, "bigData/busTime/" + msgArrival)
 
             if myval[1] == "busStation":
                 latitude = myval[2]  # 위도
@@ -48,7 +49,7 @@ def on_message(client, userdata, msg):
                 target_stationName = station[1]
                 print(target_stationName)
                 print(uuid)
-                publish.single("eyeson/" +uuid, "bigData/busStation/" + target_stationName, hostname="15.164.46.54")
+                publish("eyeson/" +uuid, "bigData/busStation/" + target_stationName)
 
 
             if myval[1] == "riding":
@@ -89,9 +90,7 @@ def on_message(client, userdata, msg):
                     print("도착 정류장에 해당하는 모든 버스: ", thebuslist)
 
                     if thebuslist == []:
-                        publish.single("eyeson/" + uuid,
-                                       "bigData/error/",
-                                       hostname="15.164.46.54")  # 데이터 전송
+                        publish("eyeson/" + uuid, "bigData/error/")  # 데이터 전송
 
                     else:
                         print("오류없이 잘 빠져나옴. 마지막 else단계")
@@ -127,9 +126,8 @@ def on_message(client, userdata, msg):
                         print("사용자 메시지:", msgArrival)
                         print("버스넘버 확인", destinationBus)
 
-                        publish.single("eyeson/" + uuid,
-                                       busFindStatus + destinationBus + "/" + msgArrival + "/" + busLicenseNum + "/" + target_stationName + "/" + str(target_stId)  + "/" + str(target_busRouteId) + "/" + str(target_ord),
-                                       hostname="15.164.46.54")  # 데이터 전송
+                        publish("eyeson/" + uuid,
+                                       busFindStatus + destinationBus + "/" + msgArrival + "/" + busLicenseNum + "/" + target_stationName + "/" + str(target_stId)  + "/" + str(target_busRouteId) + "/" + str(target_ord))  # 데이터 전송
                         time.sleep(1)
                         noticeOneMinute_thread(arrival, uuid, target_stId, target_busRouteId, target_ord)
 
@@ -148,11 +146,12 @@ def on_message(client, userdata, msg):
                     print("차량 번호:",busLicenseNum)  # 버스 차량 번호
                     print("사용자 메시지:", msgArrival)
 
-                    publish.single("eyeson/" + uuid, busFindStatus + busNum + "/" + msgArrival + "/" + busLicenseNum + "/" + target_stationName + "/" + str(target_stId)  + "/" + str(target_busRouteId) + "/" + str(target_ord), hostname="15.164.46.54")  # 데이터 전송
+                    publish("eyeson/" + uuid, busFindStatus + busNum + "/" + msgArrival + "/" + busLicenseNum + "/" + target_stationName + "/" + str(target_stId)  + "/" + str(target_busRouteId) + "/" + str(target_ord))  # 데이터 전송
                     time.sleep(1)
                     noticeOneMinute_thread(arrival, uuid, target_stId, target_busRouteId, target_ord)
     except:
         pass
+
 
 
 mqttClient = mqtt.Client()  # 클라이언트 객체 생성
@@ -163,7 +162,7 @@ mqttClient.on_connect = on_connect
 mqttClient.on_message = on_message
 
 # 브로커에 연결하기
-mqttClient.connect("15.164.46.54", 1883, 60)
+mqttClient.connect("172.30.1.52", 1883, 60)
 
 # 토픽이 전달될때까지 수신대기
 mqttClient.loop_forever()
