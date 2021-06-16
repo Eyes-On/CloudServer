@@ -8,7 +8,7 @@ from paho.mqtt import publish
 # 전역변수
 
 key = 'AT98N5LWRAir0I67tVgrf6Vfnio9LCMcwusSbOjmdkEpSOGyobdyAq9cb41G6O4pgTp6Jcmpv8e87bplMNY7tQ%3D%3D'
-radius = 100  # 범위 (넓히면 여러 정류장 인식 됨.)
+radius = 1000  # 범위 (넓히면 여러 정류장 인식 됨.)
 data1 = pd.read_csv('./data/busnumber_to_busRouteid.csv') # 경로 설정
 
 # 빅데이터 함수
@@ -19,11 +19,11 @@ def position(x, y, r):
     dict = xmltodict.parse(content)
 
     # 첫번째 정류장이라 설정
+    print(1)
     target_stId = int(dict['ServiceResult']['msgBody']['itemList'][0]['stationId'])
     target_stationName = str(dict['ServiceResult']['msgBody']['itemList'][0]['stationNm'])
     target_arsId = str(dict['ServiceResult']['msgBody']['itemList'][0]['arsId'])
     target_msgStation = "현재 인식된 정류장은 " + target_stationName + " 입니다."
-
     return (target_stId, target_stationName, target_arsId, target_msgStation)
 
 def ordSearch(target_bus, target_arsId):
@@ -192,5 +192,5 @@ def waitdeep(a):
             x.append(float(i))
     return x
 
-def publish(topic, data):
-    publish.single(topic,data,hostname="172.30.1.52")
+def pub(topic, data):
+    publish.single(topic, data, hostname="172.30.1.52")

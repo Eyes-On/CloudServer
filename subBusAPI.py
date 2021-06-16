@@ -40,7 +40,7 @@ def on_message(client, userdata, msg):
                 indexsin = msgArrival.find("승")
                 msgArrival = msgArrival[0:indexsin]
                 print(msgArrival)
-                publish("eyeson/" + uuid, "bigData/busTime/" + msgArrival)
+                pub("eyeson/" + uuid, "bigData/busTime/" + msgArrival, hostname="172.30.1.52")
 
             if myval[1] == "busStation":
                 latitude = myval[2]  # 위도
@@ -49,7 +49,7 @@ def on_message(client, userdata, msg):
                 target_stationName = station[1]
                 print(target_stationName)
                 print(uuid)
-                publish("eyeson/" +uuid, "bigData/busStation/" + target_stationName)
+                pub("eyeson/" +uuid, "bigData/busStation/" + target_stationName)
 
 
             if myval[1] == "riding":
